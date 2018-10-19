@@ -1,0 +1,75 @@
+---
+title: "Presentación del muestreo en alumnos de EGB a nivel nacional"
+author: "Giovanella Peña"
+#date: "13 de octubre de 2018"
+output: ioslides_presentation
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## 1.	UNIDAD DE MUESTREO
+
+Se realizó un muestreo en Ecuador continental más de **10000** alumnos de *EGB* para determinar la prevalencia de parasitosis que son desatendidas y re-emergentes en el país. Dentro de las 24 provincias han sido muestreadas 19.
+
+```{r , eval = TRUE, echo = FALSE, include = FALSE, results="hide",comment=""}
+library("RODBC")
+library(DT)
+library(tidyverse)
+library("readxl"); 
+library("RODBC"); ## conexion
+rsl<- read_excel("C:/Users/CHITO/Desktop/modulo3_GP/propad_qry_mst_rsl_lcl.xlsx")
+colnames(rsl)<-c("RegiÃ³n","Provincias","genero","animales","fecha_nac","dts","peso","dgPrs")
+prv_MstAlm <- select(rsl,Provincias) %>% group_by(Provincias) %>% count(Provincias) %>% arrange(Provincias)
+Tabl<- select(rsl,dgPrs,Provincias)%>% group_by(dgPrs,Provincias) %>% count(dgPrs) %>% filter(dgPrs=='prs') 
+Tabla_prc<-left_join(prv_MstAlm,Tabl,"Provincias")
+Tabla<- Tabla_prc %>% mutate(por = round(((n.y/n.x)*100),2))
+colnames(Tabla)<-c("Provincias","ttlAlmprv","dgPrs","mstAlmprv","Porcentaje")
+Tabla
+```
+```{r}
+Tabla[1:8,]
+```
+***
+ademas
+
+
+```{r}
+Tabla[9:19,]
+```
+ ***
+  De las 19 provincias notamos que han sido muestreados menos alumnos en Loja y Santa Elena a relación de las provincias de Azuay, Chimborazo, Guayas, Manabí y Pichincha que tienen mayor cantidad de alumnos, pero con respecto al porcentaje realizado con el total de la prevalencia de parasitosis las provincias de Pichincha y Guayas tienen el menor porcentaje mientras que las provincias de **Cañar, Morona Santiago y Zamora Chinchipe** tiene el mayor porcentaje.
+
+
+***
+### 2.	ESTADÍSTICA DESCRIPTIVA
+Del estudio realizado a los alumnos de EGB se obtiene que la prevalencia de parasitosis entre en las provincias muestreadas es del 87.64% con relación a este valor vemos que los porcentajes de las provincias se encuentran a 6.424%, además el mayor porcentaje de que tengan prevalencia de parasitosis es de 97.51% que corresponde a la provincia de *Zamora Chinchipe* y 74.05% como mánimo la provincia de *Guayas*, así los porcentajes de las provincias se encuentre en 23.320% como indican las gráficas siguientes:
+
+***
+```{r  , eval = TRUE, echo = FALSE, results="hide",comment=""}
+source("C:/Users/CHITO/Desktop/Giovi/curso R/modulo2/funciones.R")
+par(mfrow = c(2, 2))  
+b<-EDA2(Tabla$Porcentaje)
+```
+
+***
+Además, el comportamiento de la prevalencia de parasitosis en las provincias muestreadas indica que el pico de los porcentajes ocurre en torno del 90% como se ve en las figuras es decir existen **mayor cantidad de provincias** que tienen **porcentajes altos**, pero no tienen a una normal. Vemos que los porcentajes se encuentra entre 73.190% y 96.510% además la mayor cantidad de porcentajes se encuentra a partir del 88.810%.
+
+***
+### 3.	ESTADISTICA NO PARAMETRICA
+Después de realizar el análisis de las variables vemos que la prevalencia de parasitosis está relacionada por no tener la costumbre de lavarse las manos tanto en el género feminismo y masculino, ver la siguiente gráfica. 
+```{r , eval = TRUE, echo = FALSE, results="hide",comment=""}
+datos_prv<- read_excel("C:/Users/CHITO/Desktop/Giovi/datos_prv.xlsx")
+air.lm<-lm(total_muestreados ~ hgr_lvd_manos, data=datos_prv)
+termplot(air.lm,se=T) 
+```
+
+***
+La prevalencia de parasitosis en el género femenino y masculino evoluciona de igual forma por no tener la costumbre de lavarse las manos, además en el género masculino se mantiene hasta más años de edad a relación de las mujeres esto se debe a que las mujeres comienzan a preocuparse más en el aseo e higiene personal y por el hogar a temprana edad a relación de los hombres, ver Figuras 1. y 2.
+
+***
+![Figura 1. Prevalencia de parasitosis por genero segun datos de hogares que no se lavan las manos.](C:/Users/CHITO/Desktop/modulo3_GP/prv_gnr.png){width=50%}
+
+***
+![Figura 2. Prevalencia de parasitosis por genero segun edad de los alumnos.](C:/Users/CHITO/Desktop/modulo3_GP/prv_edd.png){width=50%}
+
